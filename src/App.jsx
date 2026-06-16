@@ -21,7 +21,7 @@ export default function App() {
 
   const {
     isListening, detectedNote, detectedFreq, detectedMidi,
-    cents, activeDegree, startListening, stopListening,
+    cents, activeDegree, startListening,
   } = usePitchDetection(scale.notes);
 
   const { sequence, currentIndex: exIndex, phase: exPhase, newExercise } = useExercise(activeDegree);
@@ -33,18 +33,28 @@ export default function App() {
     enabledDegrees, toggleDegree, newArpeggio,
   } = useArpeggio(detectedFreq, scale);
 
+  const switchTab = (t) => {
+    setTab(t);
+    if (t === 'practice' && !isListening) startListening();
+  };
+
+  const handleNewExercise = () => {
+    if (!isListening) startListening();
+    newExercise();
+  };
+
+  const handleNewArpeggio = () => {
+    if (!isListening) startListening();
+    newArpeggio();
+  };
+
   if (showWelcome) {
     return <WelcomeScreen onBegin={() => setShowWelcome(false)} />;
   }
 
   return (
     <div className="app">
-      <ScaleHeader
-        scaleName={`${scale.rootName} ${scale.modeLabel}`}
-        isListening={isListening}
-        onStartMic={startListening}
-        onStopMic={stopListening}
-      />
+      <ScaleHeader scaleName={`${scale.rootName} ${scale.modeLabel}`} />
 
       <ScalePicker
         scale={scale}
@@ -59,7 +69,7 @@ export default function App() {
           <button
             key={t}
             className={`tab-btn${tab === t ? ' active' : ''}`}
-            onClick={() => setTab(t)}
+            onClick={() => switchTab(t)}
           >
             {t === 'practice' ? 'Free Practice' : t === 'exercise' ? 'Scale Exercise' : 'Arpeggio'}
           </button>
@@ -78,7 +88,7 @@ export default function App() {
         {tab === 'exercise' && (
           <>
             <Exercise sequence={sequence} currentIndex={exIndex} phase={exPhase}
-              activeDegree={activeDegree} scaleNotes={scale.notes} onNew={newExercise} />
+              activeDegree={activeDegree} scaleNotes={scale.notes} onNew={handleNewExercise} />
             <PitchDisplay isListening={isListening} detectedNote={detectedNote}
               detectedFreq={detectedFreq} cents={cents} activeDegree={activeDegree} />
           </>
@@ -87,7 +97,7 @@ export default function App() {
         {tab === 'arpeggio' && (
           <>
             <ArpeggioExercise chord={chord} currentIndex={arpIndex} phase={arpPhase}
-              activeTone={activeTone} onNew={newArpeggio} />
+              activeTone={activeTone} onNew={handleNewArpeggio} />
             <ChordSelector scaleChords={scaleChords} enabledDegrees={enabledDegrees} onToggle={toggleDegree} />
             <PitchDisplay isListening={isListening} detectedNote={detectedNote}
               detectedFreq={detectedFreq} cents={cents} activeDegree={null} />
