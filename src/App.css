@@ -386,22 +386,26 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  /* Uniform size — no layout shift when state changes */
+  width: 56px;
+  height: 64px;
+  flex-shrink: 0;
   border-radius: 12px;
   border: 2px solid #1e2535;
   background: #1a1f2e;
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
   user-select: none;
 }
 
-.ex-card.past    { width: 44px; height: 44px; background: #0a1a10; border-color: #166534; }
-.ex-card.current { width: 80px; height: 90px; border-color: #334155; }
-.ex-card.future  { width: 52px; height: 58px; opacity: 0.38; }
+.ex-card.past    { background: #0a1a10; border-color: #166534; }
+.ex-card.current { border-color: #475569; }
+.ex-card.future  { opacity: 0.35; }
 
 .ex-card.current.singing {
   background: #052e16;
   border-color: #4ade80;
   box-shadow: 0 0 24px rgba(74, 222, 128, 0.4);
-  animation: singingPulse 0.6s ease-in-out forwards;
+  animation: singingGlow 0.6s ease-in-out forwards;
 }
 
 .ex-card.current.wrong {
@@ -410,18 +414,18 @@ body {
   box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);
 }
 
-@keyframes singingPulse {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.08); }
-  100% { transform: scale(1.04); }
+@keyframes singingGlow {
+  0%   { box-shadow: 0 0 8px  rgba(74, 222, 128, 0.2); }
+  50%  { box-shadow: 0 0 32px rgba(74, 222, 128, 0.7); }
+  100% { box-shadow: 0 0 24px rgba(74, 222, 128, 0.4); }
 }
 
-.ex-check  { font-size: 1.1rem; color: #4ade80; }
-.ex-degree { font-size: 1.6rem; font-weight: 800; color: #94a3b8; line-height: 1; }
-.ex-note   { font-size: 0.72rem; font-weight: 600; color: #64748b; }
+.ex-check  { font-size: 1rem;  color: #4ade80; }
+.ex-degree { font-size: 1.4rem; font-weight: 800; color: #64748b; line-height: 1; }
+.ex-note   { font-size: 0.68rem; font-weight: 600; color: #475569; }
 
-.ex-card.current .ex-degree { font-size: 2rem; color: #e2e8f0; }
-.ex-card.current .ex-note   { font-size: 0.85rem; color: #94a3b8; }
+.ex-card.current .ex-degree { color: #e2e8f0; }
+.ex-card.current .ex-note   { color: #94a3b8; }
 .ex-card.current.singing .ex-degree { color: #4ade80; }
 .ex-card.current.singing .ex-note   { color: #86efac; }
 .ex-card.current.wrong   .ex-degree { color: #f87171; }
@@ -629,10 +633,7 @@ button {
   }
   .exercise-sequence::-webkit-scrollbar { display: none; }
 
-  .ex-card.past    { width: 36px; height: 36px; flex-shrink: 0; border-radius: 8px; }
-  .ex-card.current { width: 64px; height: 74px; flex-shrink: 0; border-radius: 10px; }
-  .ex-card.future  { width: 42px; height: 50px; flex-shrink: 0; border-radius: 8px; }
-  .ex-card.current .ex-degree { font-size: 1.6rem; }
+  .ex-card { width: 44px; height: 52px; border-radius: 8px; }
 
   /* Chord selector — 4-column grid, two rows of 4+3 */
   .chord-selector { max-width: 100%; }
