@@ -50,6 +50,7 @@ export function usePitchDetection(scaleNotes) {
   }, []);
 
   const startListening = useCallback(async () => {
+    if (streamRef.current) return; // already listening
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { getScaleChords } from './utils/musicTheory';
 import { useScale } from './hooks/useScale';
 import { usePitchDetection } from './hooks/usePitchDetection';
@@ -15,7 +15,6 @@ import './App.css';
 
 function playCoinSound() {
   const ctx = new AudioContext();
-  // Two-tone retro coin: E5 → B5
   [[659, 0], [988, 0.09]].forEach(([freq, delay]) => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -42,7 +41,7 @@ export default function App() {
 
   const {
     isListening, detectedNote, detectedFreq, detectedMidi,
-    cents, activeDegree, startListening,
+    cents, activeDegree, startListening, stopListening,
   } = usePitchDetection(scale.notes);
 
   const onAdvance = useCallback(() => {
@@ -60,23 +59,21 @@ export default function App() {
     enabledDegrees, toggleDegree, newArpeggio,
   } = useArpeggio(detectedFreq, scale, tab === 'arpeggio' ? onAdvance : null);
 
-  const switchTab = (t) => {
-    setTab(t);
-    if (t === 'practice' && !isListening) startListening();
-  };
+  // Single source of truth for mic state:
+  // on during Free Practice, on while an exercise is actively singing, off otherwise.
+  useEffect(() => {
+    if (showWelcome) return;
+    const shouldListen =
+      tab === 'practice' ||
+      (tab === 'exercise'  && exPhase  === 'singing') ||
+      (tab === 'arpeggio'  && arpPhase === 'singing');
 
-  const handleNewExercise = () => {
-    if (!isListening) startListening();
-    newExercise();
-  };
-
-  const handleNewArpeggio = () => {
-    if (!isListening) startListening();
-    newArpeggio();
-  };
+    if (shouldListen) startListening();
+    else stopListening();
+  }, [showWelcome, tab, exPhase, arpPhase, startListening, stopListening]);
 
   if (showWelcome) {
-    return <WelcomeScreen onBegin={() => { setShowWelcome(false); startListening(); }} />;
+    return <WelcomeScreen onBegin={() => setShowWelcome(false)} />;
   }
 
   return (
@@ -96,7 +93,7 @@ export default function App() {
           <button
             key={t}
             className={`tab-btn${tab === t ? ' active' : ''}`}
-            onClick={() => switchTab(t)}
+            onClick={() => setTab(t)}
           >
             {t === 'practice' ? 'Free Practice' : t === 'exercise' ? 'Scale Exercise' : 'Arpeggio'}
           </button>
@@ -115,7 +112,7 @@ export default function App() {
         {tab === 'exercise' && (
           <>
             <Exercise sequence={sequence} currentIndex={exIndex} phase={exPhase}
-              activeDegree={activeDegree} scaleNotes={scale.notes} failedIndices={failedIndices} onNew={handleNewExercise} />
+              activeDegree={activeDegree} scaleNotes={scale.notes} failedIndices={failedIndices} onNew={newExercise} />
             <PitchDisplay isListening={isListening} detectedNote={detectedNote}
               detectedFreq={detectedFreq} cents={cents} activeDegree={activeDegree} />
           </>
@@ -124,7 +121,7 @@ export default function App() {
         {tab === 'arpeggio' && (
           <>
             <ArpeggioExercise chord={chord} currentIndex={arpIndex} phase={arpPhase}
-              activeTone={activeTone} failedTones={failedTones} onNew={handleNewArpeggio} />
+              activeTone={activeTone} failedTones={failedTones} onNew={newArpeggio} />
             <ChordSelector scaleChords={scaleChords} enabledDegrees={enabledDegrees} onToggle={toggleDegree} />
             <PitchDisplay isListening={isListening} detectedNote={detectedNote}
               detectedFreq={detectedFreq} cents={cents} activeDegree={null} />
