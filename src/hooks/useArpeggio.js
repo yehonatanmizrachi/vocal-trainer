@@ -94,6 +94,17 @@ export function useArpeggio(detectedFreq, scale, onAdvance) {
     pendingToneRef.current = { value: null, count: 0 };
   }, [enabledDegrees, scale]);
 
+  const stopArpeggio = useCallback(() => {
+    clearTimeout(timerRef.current);
+    clearTimeout(timeoutRef.current);
+    setChord(null);
+    setCurrentIndex(0);
+    setPhase('idle');
+    setActiveTone(null);
+    setFailedTones(new Set());
+    pendingToneRef.current = { value: null, count: 0 };
+  }, []);
+
   const toggleDegree = useCallback((deg) => {
     setEnabledDegrees(prev => {
       const next = new Set(prev);
@@ -103,5 +114,5 @@ export function useArpeggio(detectedFreq, scale, onAdvance) {
     });
   }, []);
 
-  return { chord, currentIndex, phase, activeTone, failedTones, enabledDegrees, toggleDegree, newArpeggio };
+  return { chord, currentIndex, phase, activeTone, failedTones, enabledDegrees, toggleDegree, newArpeggio, stopArpeggio };
 }

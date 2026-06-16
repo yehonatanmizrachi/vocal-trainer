@@ -25,6 +25,15 @@ export function useExercise(activeDegree, scaleNotes, onAdvance) {
     setFailedIndices(new Set());
   }, []);
 
+  const stopExercise = useCallback(() => {
+    clearTimeout(timerRef.current);
+    clearTimeout(timeoutRef.current);
+    setSequence(null);
+    setCurrentIndex(0);
+    setPhase('idle');
+    setFailedIndices(new Set());
+  }, []);
+
   // Hold-to-advance: correct note held for HOLD_MS
   useEffect(() => {
     if (phase !== 'singing' || !sequence) return;
@@ -65,5 +74,5 @@ export function useExercise(activeDegree, scaleNotes, onAdvance) {
     };
   }, []);
 
-  return { sequence, currentIndex, phase, failedIndices, newExercise };
+  return { sequence, currentIndex, phase, failedIndices, newExercise, stopExercise };
 }

@@ -238,6 +238,9 @@ body {
 .btn-play-root { background: #0f2d1a; color: #4ade80; }
 .btn-play-root:hover { background: #14401f; color: #6ee7b7; }
 
+.btn-stop { background: #3b0a0a; color: #f87171; }
+.btn-stop:hover { background: #4f1111; color: #fca5a5; }
+
 .btn-mic {
   padding: 8px 18px;
   border-radius: 8px;

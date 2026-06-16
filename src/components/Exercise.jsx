@@ -1,13 +1,12 @@
 import { midiToNoteName } from '../utils/musicTheory';
 
-export function Exercise({ sequence, currentIndex, phase, activeDegree, scaleNotes, failedIndices = new Set(), onNew }) {
+export function Exercise({ sequence, currentIndex, phase, activeDegree, scaleNotes, failedIndices = new Set(), onNew, onStop }) {
   return (
     <div className="exercise">
       <div className="exercise-header">
-        <button className="btn-action" onClick={onNew}>
-          {phase === 'idle' ? 'Start Exercise' : 'New Exercise'}
-        </button>
-        {sequence && phase !== 'idle' && (
+        {phase === 'idle'    && <button className="btn-action" onClick={onNew}>Start Exercise</button>}
+        {phase === 'singing' && <button className="btn-action btn-stop" onClick={onStop}>Stop</button>}
+        {phase === 'singing' && sequence && (
           <span className="exercise-progress">
             {Math.min(currentIndex, sequence.length)} / {sequence.length}
           </span>

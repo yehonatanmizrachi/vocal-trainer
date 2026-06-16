@@ -49,15 +49,21 @@ export default function App() {
     playCoinSound();
   }, []);
 
-  const { sequence, currentIndex: exIndex, phase: exPhase, failedIndices, newExercise } =
+  const { sequence, currentIndex: exIndex, phase: exPhase, failedIndices, newExercise, stopExercise } =
     useExercise(activeDegree, scale.notes, tab === 'exercise' ? onAdvance : null);
 
   const scaleChords = getScaleChords(scale);
 
   const {
     chord, currentIndex: arpIndex, phase: arpPhase, activeTone, failedTones,
-    enabledDegrees, toggleDegree, newArpeggio,
+    enabledDegrees, toggleDegree, newArpeggio, stopArpeggio,
   } = useArpeggio(detectedFreq, scale, tab === 'arpeggio' ? onAdvance : null);
+
+  const handleTabChange = (t) => {
+    if (t !== 'exercise') stopExercise();
+    if (t !== 'arpeggio') stopArpeggio();
+    setTab(t);
+  };
 
   // Single source of truth for mic state:
   // on during Free Practice, on while an exercise is actively singing, off otherwise.
@@ -93,7 +99,7 @@ export default function App() {
           <button
             key={t}
             className={`tab-btn${tab === t ? ' active' : ''}`}
-            onClick={() => setTab(t)}
+            onClick={() => handleTabChange(t)}
           >
             {t === 'practice' ? 'Free Practice' : t === 'exercise' ? 'Scale Exercise' : 'Arpeggio'}
           </button>
@@ -112,7 +118,8 @@ export default function App() {
         {tab === 'exercise' && (
           <>
             <Exercise sequence={sequence} currentIndex={exIndex} phase={exPhase}
-              activeDegree={activeDegree} scaleNotes={scale.notes} failedIndices={failedIndices} onNew={newExercise} />
+              activeDegree={activeDegree} scaleNotes={scale.notes} failedIndices={failedIndices}
+              onNew={newExercise} onStop={stopExercise} />
             <PitchDisplay isListening={isListening} detectedNote={detectedNote}
               detectedFreq={detectedFreq} cents={cents} activeDegree={activeDegree} />
           </>
@@ -121,7 +128,7 @@ export default function App() {
         {tab === 'arpeggio' && (
           <>
             <ArpeggioExercise chord={chord} currentIndex={arpIndex} phase={arpPhase}
-              activeTone={activeTone} failedTones={failedTones} onNew={newArpeggio} />
+              activeTone={activeTone} failedTones={failedTones} onNew={newArpeggio} onStop={stopArpeggio} />
             <ChordSelector scaleChords={scaleChords} enabledDegrees={enabledDegrees} onToggle={toggleDegree} />
             <PitchDisplay isListening={isListening} detectedNote={detectedNote}
               detectedFreq={detectedFreq} cents={cents} activeDegree={null} />

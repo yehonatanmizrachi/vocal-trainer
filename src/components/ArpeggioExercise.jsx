@@ -22,14 +22,13 @@ export function ChordSelector({ scaleChords, enabledDegrees, onToggle }) {
   );
 }
 
-export function ArpeggioExercise({ chord, currentIndex, phase, activeTone, failedTones = new Set(), onNew }) {
+export function ArpeggioExercise({ chord, currentIndex, phase, activeTone, failedTones = new Set(), onNew, onStop }) {
   return (
     <div className="exercise">
       <div className="exercise-header">
-        <button className="btn-action" onClick={onNew}>
-          {phase === 'idle' ? 'Start Arpeggio' : 'New Arpeggio'}
-        </button>
-        {chord && phase === 'singing' && (
+        {phase === 'idle'    && <button className="btn-action" onClick={onNew}>Start Arpeggio</button>}
+        {phase === 'singing' && <button className="btn-action btn-stop" onClick={onStop}>Stop</button>}
+        {phase === 'singing' && chord && (
           <span className="exercise-progress">
             {currentIndex} / {chord.notes.length}
           </span>
