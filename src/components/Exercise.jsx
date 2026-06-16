@@ -16,7 +16,7 @@ export function Exercise({ sequence, currentIndex, phase, activeDegree, scaleNot
 
       {phase === 'idle' && (
         <p className="exercise-prompt">
-          Press <strong>Start Exercise</strong> to get a random sequence of 5–10 scale degrees. Sing each one to advance.
+          Press <strong>Start Exercise</strong> to get a sequence of 6 scale degrees. Sing each one and hold to advance.
         </p>
       )}
 
