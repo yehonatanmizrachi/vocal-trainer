@@ -3,11 +3,13 @@ import { generateExercise } from '../utils/musicTheory';
 
 const HOLD_MS = 600;
 
-export function useExercise(activeDegree) {
+export function useExercise(activeDegree, onAdvance) {
   const [sequence, setSequence] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [phase, setPhase] = useState('idle'); // 'idle' | 'singing' | 'done'
   const timerRef = useRef(null);
+  const onAdvanceRef = useRef(onAdvance);
+  useEffect(() => { onAdvanceRef.current = onAdvance; }, [onAdvance]);
 
   const newExercise = useCallback(() => {
     clearTimeout(timerRef.current);
@@ -23,6 +25,7 @@ export function useExercise(activeDegree) {
     if (activeDegree !== target) return;
 
     timerRef.current = setTimeout(() => {
+      onAdvanceRef.current?.();
       const next = currentIndex + 1;
       if (next >= sequence.length) {
         setPhase('done');

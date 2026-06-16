@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { getScaleChords } from './utils/musicTheory';
 import { useScale } from './hooks/useScale';
 import { usePitchDetection } from './hooks/usePitchDetection';
@@ -13,9 +13,30 @@ import { ArpeggioExercise, ChordSelector } from './components/ArpeggioExercise';
 import { PitchDisplay } from './components/PitchDisplay';
 import './App.css';
 
+function playCoinSound() {
+  const ctx = new AudioContext();
+  // Two-tone retro coin: E5 → B5
+  [[659, 0], [988, 0.09]].forEach(([freq, delay]) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    const t = ctx.currentTime + delay;
+    gain.gain.setValueAtTime(0.001, t);
+    gain.gain.linearRampToValueAtTime(0.22, t + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+    osc.start(t);
+    osc.stop(t + 0.15);
+  });
+  setTimeout(() => ctx.close(), 600);
+}
+
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [tab, setTab] = useState('practice');
+  const [coins, setCoins] = useState(0);
 
   const { scale, setRootPc, setModeIndex, randomize, playRoot } = useScale();
 
@@ -24,14 +45,19 @@ export default function App() {
     cents, activeDegree, startListening,
   } = usePitchDetection(scale.notes);
 
-  const { sequence, currentIndex: exIndex, phase: exPhase, newExercise } = useExercise(activeDegree);
+  const onAdvance = useCallback(() => {
+    setCoins(c => c + 1);
+    playCoinSound();
+  }, []);
+
+  const { sequence, currentIndex: exIndex, phase: exPhase, newExercise } = useExercise(activeDegree, onAdvance);
 
   const scaleChords = getScaleChords(scale);
 
   const {
     chord, currentIndex: arpIndex, phase: arpPhase, activeTone,
     enabledDegrees, toggleDegree, newArpeggio,
-  } = useArpeggio(detectedFreq, scale);
+  } = useArpeggio(detectedFreq, scale, onAdvance);
 
   const switchTab = (t) => {
     setTab(t);
@@ -54,7 +80,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <ScaleHeader scaleName={`${scale.rootName} ${scale.modeLabel}`} />
+      <ScaleHeader scaleName={`${scale.rootName} ${scale.modeLabel}`} coins={coins} />
 
       <ScalePicker
         scale={scale}

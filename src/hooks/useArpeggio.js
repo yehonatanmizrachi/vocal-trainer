@@ -5,7 +5,7 @@ const HOLD_MS = 600;
 const ALL_DEGREES = new Set([0, 1, 2, 3, 4, 5, 6]);
 const STABLE_FRAMES = 4;
 
-export function useArpeggio(detectedFreq, scale) {
+export function useArpeggio(detectedFreq, scale, onAdvance) {
   const [chord, setChord] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [phase, setPhase] = useState('idle');
@@ -13,6 +13,8 @@ export function useArpeggio(detectedFreq, scale) {
   const [activeTone, setActiveTone] = useState(null);
   const timerRef = useRef(null);
   const pendingToneRef = useRef({ value: null, count: 0 });
+  const onAdvanceRef = useRef(onAdvance);
+  useEffect(() => { onAdvanceRef.current = onAdvance; }, [onAdvance]);
 
   // Reset exercise whenever the scale changes
   useEffect(() => {
@@ -47,6 +49,7 @@ export function useArpeggio(detectedFreq, scale) {
   useEffect(() => {
     if (phase !== 'singing' || !chord || activeTone !== currentIndex + 1) return;
     timerRef.current = setTimeout(() => {
+      onAdvanceRef.current?.();
       const next = currentIndex + 1;
       if (next >= chord.notes.length) setPhase('done');
       else setCurrentIndex(next);

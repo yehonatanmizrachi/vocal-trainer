@@ -158,6 +158,23 @@ body {
   font-weight: 600;
 }
 
+/* ── Coin counter ────────────────────────── */
+.coin-counter {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fbbf24;
+  letter-spacing: 0.02em;
+  animation: coinBump 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes coinBump {
+  0%   { transform: scale(1.6); color: #fde68a; }
+  60%  { transform: scale(0.9); }
+  100% { transform: scale(1);   color: #fbbf24; }
+}
+
 /* ── Scale picker ────────────────────────── */
 .scale-picker {
   padding: 16px 32px;
