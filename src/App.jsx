@@ -49,7 +49,7 @@ export default function App() {
   };
 
   if (showWelcome) {
-    return <WelcomeScreen onBegin={() => setShowWelcome(false)} />;
+    return <WelcomeScreen onBegin={() => { setShowWelcome(false); startListening(); }} />;
   }
 
   return (
