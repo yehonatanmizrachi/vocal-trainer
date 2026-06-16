@@ -25,6 +25,24 @@ export function midiToFreq(midi) {
   return 440 * Math.pow(2, (midi - 69) / 12);
 }
 
+export function playMidiNote(midi, duration = 1.2) {
+  const ctx = new AudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.type = 'sine';
+  osc.frequency.value = midiToFreq(midi);
+  const t = ctx.currentTime;
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(0.4, t + 0.04);
+  gain.gain.setValueAtTime(0.4, t + duration - 0.15);
+  gain.gain.linearRampToValueAtTime(0, t + duration);
+  osc.start(t);
+  osc.stop(t + duration);
+  setTimeout(() => ctx.close(), (duration + 0.5) * 1000);
+}
+
 export function freqToMidi(freq) {
   return 69 + 12 * Math.log2(freq / 440);
 }

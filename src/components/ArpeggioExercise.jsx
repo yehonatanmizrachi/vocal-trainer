@@ -22,7 +22,7 @@ export function ChordSelector({ scaleChords, enabledDegrees, onToggle }) {
   );
 }
 
-export function ArpeggioExercise({ chord, currentIndex, phase, activeTone, onNew }) {
+export function ArpeggioExercise({ chord, currentIndex, phase, activeTone, failedTones = new Set(), onNew }) {
   return (
     <div className="exercise">
       <div className="exercise-header">
@@ -65,16 +65,19 @@ export function ArpeggioExercise({ chord, currentIndex, phase, activeTone, onNew
             {chord.notes.map((midi, i) => {
               const isPast    = i < currentIndex;
               const isCurrent = i === currentIndex;
+              const isFailed  = isPast && failedTones.has(i);
               const isSinging = isCurrent && activeTone === i + 1;
               const isWrong   = isCurrent && activeTone !== null && activeTone !== i + 1;
 
               return (
                 <div
                   key={i}
-                  className={`ex-card${isPast ? ' past' : ''}${isCurrent ? ' current' : ' future'}${isSinging ? ' singing' : ''}${isWrong ? ' wrong' : ''}`}
+                  className={`ex-card${isPast ? ' past' : ''}${isFailed ? ' failed' : ''}${isCurrent ? ' current' : ' future'}${isSinging ? ' singing' : ''}${isWrong ? ' wrong' : ''}`}
                 >
                   {isPast ? (
-                    <span className="ex-check">✓</span>
+                    isFailed
+                      ? <span className="ex-fail">✗</span>
+                      : <span className="ex-check">✓</span>
                   ) : (
                     <>
                       <span className="ex-degree">{midiToNoteName(midi)}</span>

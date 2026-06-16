@@ -1,6 +1,6 @@
 import { midiToNoteName } from '../utils/musicTheory';
 
-export function Exercise({ sequence, currentIndex, phase, activeDegree, scaleNotes, onNew }) {
+export function Exercise({ sequence, currentIndex, phase, activeDegree, scaleNotes, failedIndices = new Set(), onNew }) {
   return (
     <div className="exercise">
       <div className="exercise-header">
@@ -34,16 +34,19 @@ export function Exercise({ sequence, currentIndex, phase, activeDegree, scaleNot
             const noteName = scaleNotes ? midiToNoteName(scaleNotes[degree - 1]) : '';
             const isPast = i < currentIndex;
             const isCurrent = i === currentIndex;
+            const isFailed = isPast && failedIndices.has(i);
             const isSinging = isCurrent && activeDegree === degree;
             const isWrong = isCurrent && activeDegree !== null && activeDegree !== degree;
 
             return (
               <div
                 key={i}
-                className={`ex-card${isPast ? ' past' : ''}${isCurrent ? ' current' : ' future'}${isSinging ? ' singing' : ''}${isWrong ? ' wrong' : ''}`}
+                className={`ex-card${isPast ? ' past' : ''}${isFailed ? ' failed' : ''}${isCurrent ? ' current' : ' future'}${isSinging ? ' singing' : ''}${isWrong ? ' wrong' : ''}`}
               >
                 {isPast ? (
-                  <span className="ex-check">✓</span>
+                  isFailed
+                    ? <span className="ex-fail">✗</span>
+                    : <span className="ex-check">✓</span>
                 ) : (
                   <>
                     <span className="ex-degree">{degree}</span>

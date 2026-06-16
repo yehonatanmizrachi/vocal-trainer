@@ -397,9 +397,10 @@ body {
   user-select: none;
 }
 
-.ex-card.past    { background: #0a1a10; border-color: #166534; }
-.ex-card.current { border-color: #475569; }
-.ex-card.future  { opacity: 0.35; }
+.ex-card.past         { background: #0a1a10; border-color: #166534; }
+.ex-card.past.failed  { background: #1a0808; border-color: #7f1d1d; }
+.ex-card.current      { border-color: #475569; }
+.ex-card.future       { opacity: 0.35; }
 
 .ex-card.current.singing {
   background: #052e16;
@@ -420,7 +421,8 @@ body {
   100% { box-shadow: 0 0 24px rgba(74, 222, 128, 0.4); }
 }
 
-.ex-check  { font-size: 1rem;  color: #4ade80; }
+.ex-check  { font-size: 1rem; color: #4ade80; }
+.ex-fail   { font-size: 1rem; color: #f87171; }
 .ex-degree { font-size: 1.4rem; font-weight: 800; color: #64748b; line-height: 1; }
 .ex-note   { font-size: 0.68rem; font-weight: 600; color: #475569; }
 

@@ -50,12 +50,13 @@ export default function App() {
     playCoinSound();
   }, []);
 
-  const { sequence, currentIndex: exIndex, phase: exPhase, newExercise } = useExercise(activeDegree, tab === 'exercise' ? onAdvance : null);
+  const { sequence, currentIndex: exIndex, phase: exPhase, failedIndices, newExercise } =
+    useExercise(activeDegree, scale.notes, tab === 'exercise' ? onAdvance : null);
 
   const scaleChords = getScaleChords(scale);
 
   const {
-    chord, currentIndex: arpIndex, phase: arpPhase, activeTone,
+    chord, currentIndex: arpIndex, phase: arpPhase, activeTone, failedTones,
     enabledDegrees, toggleDegree, newArpeggio,
   } = useArpeggio(detectedFreq, scale, tab === 'arpeggio' ? onAdvance : null);
 
@@ -114,7 +115,7 @@ export default function App() {
         {tab === 'exercise' && (
           <>
             <Exercise sequence={sequence} currentIndex={exIndex} phase={exPhase}
-              activeDegree={activeDegree} scaleNotes={scale.notes} onNew={handleNewExercise} />
+              activeDegree={activeDegree} scaleNotes={scale.notes} failedIndices={failedIndices} onNew={handleNewExercise} />
             <PitchDisplay isListening={isListening} detectedNote={detectedNote}
               detectedFreq={detectedFreq} cents={cents} activeDegree={activeDegree} />
           </>
@@ -123,7 +124,7 @@ export default function App() {
         {tab === 'arpeggio' && (
           <>
             <ArpeggioExercise chord={chord} currentIndex={arpIndex} phase={arpPhase}
-              activeTone={activeTone} onNew={handleNewArpeggio} />
+              activeTone={activeTone} failedTones={failedTones} onNew={handleNewArpeggio} />
             <ChordSelector scaleChords={scaleChords} enabledDegrees={enabledDegrees} onToggle={toggleDegree} />
             <PitchDisplay isListening={isListening} detectedNote={detectedNote}
               detectedFreq={detectedFreq} cents={cents} activeDegree={null} />
