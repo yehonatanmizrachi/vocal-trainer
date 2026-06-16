@@ -66,11 +66,12 @@ export function ArpeggioExercise({ chord, currentIndex, phase, activeTone, onNew
               const isPast    = i < currentIndex;
               const isCurrent = i === currentIndex;
               const isSinging = isCurrent && activeTone === i + 1;
+              const isWrong   = isCurrent && activeTone !== null && activeTone !== i + 1;
 
               return (
                 <div
                   key={i}
-                  className={`ex-card${isPast ? ' past' : ''}${isCurrent ? ' current' : ' future'}${isSinging ? ' singing' : ''}`}
+                  className={`ex-card${isPast ? ' past' : ''}${isCurrent ? ' current' : ' future'}${isSinging ? ' singing' : ''}${isWrong ? ' wrong' : ''}`}
                 >
                   {isPast ? (
                     <span className="ex-check">✓</span>

@@ -35,11 +35,12 @@ export function Exercise({ sequence, currentIndex, phase, activeDegree, scaleNot
             const isPast = i < currentIndex;
             const isCurrent = i === currentIndex;
             const isSinging = isCurrent && activeDegree === degree;
+            const isWrong = isCurrent && activeDegree !== null && activeDegree !== degree;
 
             return (
               <div
                 key={i}
-                className={`ex-card${isPast ? ' past' : ''}${isCurrent ? ' current' : ' future'}${isSinging ? ' singing' : ''}`}
+                className={`ex-card${isPast ? ' past' : ''}${isCurrent ? ' current' : ' future'}${isSinging ? ' singing' : ''}${isWrong ? ' wrong' : ''}`}
               >
                 {isPast ? (
                   <span className="ex-check">✓</span>
