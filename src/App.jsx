@@ -50,14 +50,14 @@ export default function App() {
     playCoinSound();
   }, []);
 
-  const { sequence, currentIndex: exIndex, phase: exPhase, newExercise } = useExercise(activeDegree, onAdvance);
+  const { sequence, currentIndex: exIndex, phase: exPhase, newExercise } = useExercise(activeDegree, tab === 'exercise' ? onAdvance : null);
 
   const scaleChords = getScaleChords(scale);
 
   const {
     chord, currentIndex: arpIndex, phase: arpPhase, activeTone,
     enabledDegrees, toggleDegree, newArpeggio,
-  } = useArpeggio(detectedFreq, scale, onAdvance);
+  } = useArpeggio(detectedFreq, scale, tab === 'arpeggio' ? onAdvance : null);
 
   const switchTab = (t) => {
     setTab(t);
