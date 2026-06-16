@@ -3,13 +3,16 @@ import { freqToMidi, findNearestDegree, buildScaleChord } from '../utils/musicTh
 
 const HOLD_MS = 600;
 const ALL_DEGREES = new Set([0, 1, 2, 3, 4, 5, 6]);
+const STABLE_FRAMES = 4;
 
 export function useArpeggio(detectedFreq, scale) {
   const [chord, setChord] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [phase, setPhase] = useState('idle');
   const [enabledDegrees, setEnabledDegrees] = useState(ALL_DEGREES);
+  const [activeTone, setActiveTone] = useState(null);
   const timerRef = useRef(null);
+  const pendingToneRef = useRef({ value: null, count: 0 });
 
   // Reset exercise whenever the scale changes
   useEffect(() => {
@@ -17,14 +20,28 @@ export function useArpeggio(detectedFreq, scale) {
     setChord(null);
     setCurrentIndex(0);
     setPhase('idle');
+    setActiveTone(null);
+    pendingToneRef.current = { value: null, count: 0 };
   }, [scale.rootPc, scale.modeIndex]);
 
-  // Convert raw frequency → discrete chord-tone index (1-based)
-  const activeTone = useMemo(() => {
+  // Raw tone detected this frame (changes at 60fps)
+  const rawTone = useMemo(() => {
     if (!detectedFreq || !chord) return null;
     const { degree } = findNearestDegree(freqToMidi(detectedFreq), chord.notes);
     return degree;
   }, [detectedFreq, chord]);
+
+  // Stabilise: only commit rawTone to activeTone after STABLE_FRAMES in a row
+  useEffect(() => {
+    if (rawTone === pendingToneRef.current.value) {
+      pendingToneRef.current.count++;
+    } else {
+      pendingToneRef.current = { value: rawTone, count: 1 };
+    }
+    if (pendingToneRef.current.count >= STABLE_FRAMES) {
+      setActiveTone(rawTone);
+    }
+  }, [rawTone]);
 
   // Advance when the user holds the right chord tone for HOLD_MS
   useEffect(() => {
@@ -46,6 +63,8 @@ export function useArpeggio(detectedFreq, scale) {
     setChord(buildScaleChord(scale, deg));
     setCurrentIndex(0);
     setPhase('singing');
+    setActiveTone(null);
+    pendingToneRef.current = { value: null, count: 0 };
   }, [enabledDegrees, scale]);
 
   const toggleDegree = useCallback((deg) => {

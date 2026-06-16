@@ -6,6 +6,7 @@ const BUFFER_SIZE = 2048;
 const CLARITY_THRESHOLD = 0.85;
 const MIN_FREQ = 70;
 const MAX_FREQ = 1200;
+const STABLE_FRAMES = 4; // frames a degree must hold before committing (~67ms at 60fps)
 
 export function usePitchDetection(scaleNotes) {
   const [state, setState] = useState({
@@ -23,8 +24,8 @@ export function usePitchDetection(scaleNotes) {
   const analyserRef = useRef(null);
   const detectorRef = useRef(null);
   const scaleNotesRef = useRef(scaleNotes);
+  const pendingDegRef = useRef({ value: null, count: 0 });
 
-  // Keep scale notes ref current without restarting the loop
   useEffect(() => {
     scaleNotesRef.current = scaleNotes;
   }, [scaleNotes]);
@@ -44,6 +45,7 @@ export function usePitchDetection(scaleNotes) {
     }
     analyserRef.current = null;
     detectorRef.current = null;
+    pendingDegRef.current = { value: null, count: 0 };
     setState({ isListening: false, detectedNote: null, detectedFreq: null, detectedMidi: null, cents: null, activeDegree: null });
   }, []);
 
@@ -73,15 +75,31 @@ export function usePitchDetection(scaleNotes) {
           const midiFloat = freqToMidi(freq);
           const noteName = midiToNoteName(Math.round(midiFloat));
           const { degree, cents } = findNearestDegree(midiFloat, scaleNotesRef.current);
-          setState({
+
+          // Accumulate stability: only commit when same degree holds for STABLE_FRAMES
+          if (degree === pendingDegRef.current.value) {
+            pendingDegRef.current.count++;
+          } else {
+            pendingDegRef.current = { value: degree, count: 1 };
+          }
+          const stable = pendingDegRef.current.count >= STABLE_FRAMES;
+
+          setState(prev => ({
             isListening: true,
             detectedNote: noteName,
             detectedFreq: Math.round(freq),
             detectedMidi: midiFloat,
             cents: Math.round(cents),
-            activeDegree: degree,
-          });
+            activeDegree: stable ? degree : prev.activeDegree,
+          }));
         } else {
+          if (null === pendingDegRef.current.value) {
+            pendingDegRef.current.count++;
+          } else {
+            pendingDegRef.current = { value: null, count: 1 };
+          }
+          const stable = pendingDegRef.current.count >= STABLE_FRAMES;
+
           setState(prev => ({
             ...prev,
             isListening: true,
@@ -89,7 +107,7 @@ export function usePitchDetection(scaleNotes) {
             detectedFreq: null,
             detectedMidi: null,
             cents: null,
-            activeDegree: null,
+            activeDegree: stable ? null : prev.activeDegree,
           }));
         }
 
