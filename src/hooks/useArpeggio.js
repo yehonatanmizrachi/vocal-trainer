@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { freqToMidi, findNearestDegree, buildScaleChord } from '../utils/musicTheory';
 
 const HOLD_MS = 600;
@@ -26,24 +26,24 @@ export function useArpeggio(detectedFreq, scale, onAdvance) {
     pendingToneRef.current = { value: null, count: 0 };
   }, [scale.rootPc, scale.modeIndex]);
 
-  // Raw tone detected this frame (changes at 60fps)
-  const rawTone = useMemo(() => {
-    if (!detectedFreq || !chord) return null;
-    const { degree } = findNearestDegree(freqToMidi(detectedFreq), chord.notes);
-    return degree;
-  }, [detectedFreq, chord]);
-
-  // Stabilise: only commit rawTone to activeTone after STABLE_FRAMES in a row
+  // Runs every frame (detectedFreq changes at 60fps) and accumulates
+  // a stability count; only commits to activeTone after STABLE_FRAMES
+  // consecutive frames on the same tone so the card doesn't flicker.
   useEffect(() => {
-    if (rawTone === pendingToneRef.current.value) {
+    const raw = (detectedFreq && chord)
+      ? findNearestDegree(freqToMidi(detectedFreq), chord.notes).degree
+      : null;
+
+    if (raw === pendingToneRef.current.value) {
       pendingToneRef.current.count++;
     } else {
-      pendingToneRef.current = { value: rawTone, count: 1 };
+      pendingToneRef.current = { value: raw, count: 1 };
     }
-    if (pendingToneRef.current.count >= STABLE_FRAMES) {
-      setActiveTone(rawTone);
+    // Fire setState only on the exact frame the threshold is first crossed
+    if (pendingToneRef.current.count === STABLE_FRAMES) {
+      setActiveTone(raw);
     }
-  }, [rawTone]);
+  }, [detectedFreq, chord]);
 
   // Advance when the user holds the right chord tone for HOLD_MS
   useEffect(() => {
