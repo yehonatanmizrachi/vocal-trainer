@@ -33,7 +33,7 @@ function randomIndices() {
 }
 
 export function useScale() {
-  const [{ rootPc, modeIndex }, setIndices] = useState(() => randomIndices());
+  const [{ rootPc, modeIndex }, setIndices] = useState({ rootPc: 0, modeIndex: 0 });
   const scale = buildScale(rootPc, modeIndex);
 
   const setRootPc = useCallback((pc) => {

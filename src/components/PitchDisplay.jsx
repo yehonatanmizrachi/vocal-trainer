@@ -9,11 +9,7 @@ function getTuningStatus(cents) {
 
 export function PitchDisplay({ isListening, detectedNote, detectedFreq, cents, activeDegree }) {
   if (!isListening) {
-    return (
-      <div className="pitch-display idle">
-        <p>Press <strong>Start Mic</strong> and begin singing</p>
-      </div>
-    );
+    return <div className="pitch-display idle" />;
   }
 
   if (!detectedNote) {

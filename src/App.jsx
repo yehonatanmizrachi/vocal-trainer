@@ -129,7 +129,7 @@ export default function App() {
           <>
             <ArpeggioExercise chord={chord} currentIndex={arpIndex} phase={arpPhase}
               activeTone={activeTone} failedTones={failedTones} onNew={newArpeggio} onStop={stopArpeggio} />
-            <ChordSelector scaleChords={scaleChords} enabledDegrees={enabledDegrees} onToggle={toggleDegree} />
+            {arpPhase !== 'singing' && <ChordSelector scaleChords={scaleChords} enabledDegrees={enabledDegrees} onToggle={toggleDegree} />}
             <PitchDisplay isListening={isListening} detectedNote={detectedNote}
               detectedFreq={detectedFreq} cents={cents} activeDegree={null} />
           </>
