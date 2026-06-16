@@ -138,7 +138,13 @@ body {
   display: flex;
   align-items: baseline;
   gap: 14px;
+  overflow: hidden;
+  min-width: 0;
+  flex: 1;
 }
+
+.app-title    { white-space: nowrap; flex-shrink: 0; }
+.app-scale-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 .app-title {
   font-size: 1.1rem;
@@ -514,20 +520,120 @@ body {
 }
 
 /* ═══════════════════════════════════════════
-   RESPONSIVE
+   GLOBAL MOBILE FOUNDATIONS
+═══════════════════════════════════════════ */
+body, .app { overflow-x: hidden; }
+
+/* Prevent double-tap zoom delay and remove tap flash */
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Comfortable touch targets everywhere */
+.tab-btn    { min-height: 44px; }
+.btn-action { min-height: 44px; }
+.btn-mic    { min-height: 44px; }
+.picker-btn { min-height: 36px; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — ≤ 640px (phones)
 ═══════════════════════════════════════════ */
 @media (max-width: 640px) {
+  /* Welcome */
   .welcome-title { font-size: 2rem; }
-  .btn-begin { padding: 14px 36px; font-size: 1rem; }
+  .welcome-tagline { font-size: 1rem; }
+  .welcome-desc br { display: none; }
+  .btn-begin { padding: 14px 36px; font-size: 1rem; width: 100%; max-width: 280px; }
 
-  .app-bar { padding: 12px 16px; }
-  .scale-picker { padding: 12px 16px; }
-  .tab-bar { padding: 0 12px; }
-  .tab-btn { padding: 10px 12px; font-size: 0.82rem; }
+  /* App bar */
+  .app-bar { padding: 10px 16px; gap: 10px; }
+  .app-title { font-size: 0.95rem; }
+  .app-scale-name { font-size: 0.82rem; }
+  .btn-mic { padding: 8px 14px; font-size: 0.82rem; }
 
-  .degree-card { width: 70px; padding: 14px 6px; }
-  .degree-number { font-size: 1.4rem; }
+  /* Scale picker — tighter, label above buttons */
+  .scale-picker { padding: 10px 16px; gap: 8px; }
+  .picker-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+  .picker-label { width: auto; font-size: 0.65rem; }
+  .picker-btn { padding: 5px 8px; font-size: 0.75rem; }
+  .picker-actions { gap: 8px; }
+  .btn-action { font-size: 0.82rem; padding: 7px 14px; }
 
-  .ex-card.current { width: 68px; height: 76px; }
+  /* Tabs — fill full width evenly */
+  .tab-bar { padding: 0; }
+  .tab-btn { flex: 1; text-align: center; padding: 10px 4px; font-size: 0.78rem; }
+
+  /* Main content — start at top, don't squeeze */
+  .main-content {
+    padding: 20px 16px;
+    gap: 20px;
+    justify-content: flex-start;
+  }
+
+  /* Degree cards — 7-column grid that fills the row */
+  .scale-degrees {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    width: 100%;
+  }
+  .degree-card { width: auto; padding: 12px 4px; border-radius: 10px; border-width: 1.5px; }
+  .degree-number { font-size: 1.1rem; }
+  .degree-roman  { font-size: 0.55rem; letter-spacing: 0; }
+  .degree-note   { font-size: 0.75rem; }
+
+  /* Exercise */
+  .exercise { gap: 16px; }
+  .exercise-target { gap: 1px; }
   .target-degree { font-size: 3rem; }
+  .target-note { font-size: 1rem; }
+  .arpeggio-numeral { font-size: 2rem; }
+  .arpeggio-chord-name { font-size: 1.1rem; }
+
+  /* Sequence — horizontal scroll so cards never wrap */
+  .exercise-sequence {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: visible;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 4px 2px 10px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .exercise-sequence::-webkit-scrollbar { display: none; }
+
+  .ex-card.past    { width: 36px; height: 36px; flex-shrink: 0; border-radius: 8px; }
+  .ex-card.current { width: 64px; height: 74px; flex-shrink: 0; border-radius: 10px; }
+  .ex-card.future  { width: 42px; height: 50px; flex-shrink: 0; border-radius: 8px; }
+  .ex-card.current .ex-degree { font-size: 1.6rem; }
+
+  /* Chord selector — 4-column grid, two rows of 4+3 */
+  .chord-selector { max-width: 100%; }
+  .chord-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+  .chord-toggle { min-width: 0; padding: 8px 4px; border-radius: 8px; }
+  .chord-numeral { font-size: 0.95rem; }
+  .chord-toggle-name { font-size: 0.68rem; }
+  .chord-toggle-quality { font-size: 0.6rem; }
+
+  /* Pitch display */
+  .pitch-display { min-height: 80px; }
+  .detected-note { font-size: 2.8rem; }
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — ≤ 380px (small phones)
+═══════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .app-scale-name { display: none; } /* too cramped alongside title + mic */
+  .degree-number { font-size: 1rem; }
+  .degree-roman  { display: none; }
+  .tab-btn { font-size: 0.72rem; padding: 10px 2px; }
+  .picker-btn { padding: 4px 6px; font-size: 0.7rem; }
 }
