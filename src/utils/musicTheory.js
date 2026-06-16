@@ -82,7 +82,7 @@ export function getScaleChords(scale) {
   return Array.from({ length: 7 }, (_, i) => buildScaleChord(scale, i));
 }
 
-export function findNearestDegree(detectedMidi, scaleNotes, toleranceCents = 50) {
+export function findNearestDegree(detectedMidi, scaleNotes, toleranceCents = 80) {
   let bestDegree = null;
   let bestCents = Infinity;
   for (let i = 0; i < scaleNotes.length; i++) {
