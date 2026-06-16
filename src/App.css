@@ -433,6 +433,29 @@ body {
 .ex-card.current.wrong   .ex-degree { color: #f87171; }
 .ex-card.current.wrong   .ex-note   { color: #fca5a5; }
 
+/* Time bar */
+.time-bar-track {
+  width: 100%;
+  max-width: 360px;
+  height: 5px;
+  background: #1e2535;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.time-bar {
+  height: 100%;
+  border-radius: 3px;
+  animation: countdown 10s linear forwards;
+}
+
+@keyframes countdown {
+  0%   { width: 100%; background: #4ade80; }
+  50%  { width:  50%; background: #facc15; }
+  80%  { width:  20%; background: #f87171; }
+  100% { width:   0%; background: #ef4444; }
+}
+
 /* Target callout */
 .exercise-target {
   display: flex;

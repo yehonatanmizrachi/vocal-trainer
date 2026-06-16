@@ -60,6 +60,12 @@ export function Exercise({ sequence, currentIndex, phase, activeDegree, scaleNot
       )}
 
       {sequence && phase === 'singing' && (
+        <div className="time-bar-track">
+          <div key={currentIndex} className="time-bar" />
+        </div>
+      )}
+
+      {sequence && phase === 'singing' && (
         <div className="exercise-target">
           <span className="target-label">Sing degree</span>
           <span className="target-degree">{sequence[currentIndex]}</span>

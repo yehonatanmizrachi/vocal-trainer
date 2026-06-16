@@ -89,6 +89,10 @@ export function ArpeggioExercise({ chord, currentIndex, phase, activeTone, faile
             })}
           </div>
 
+          <div className="time-bar-track">
+            <div key={currentIndex} className="time-bar" />
+          </div>
+
           <div className="exercise-target">
             <span className="target-label">Sing</span>
             <span className="target-degree">{midiToNoteName(chord.notes[currentIndex])}</span>
