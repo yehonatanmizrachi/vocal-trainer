@@ -621,18 +621,8 @@ button {
   .arpeggio-numeral { font-size: 2rem; }
   .arpeggio-chord-name { font-size: 1.1rem; }
 
-  /* Sequence — horizontal scroll so cards never wrap */
-  .exercise-sequence {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: visible;
-    justify-content: flex-start;
-    width: 100%;
-    padding: 4px 2px 10px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .exercise-sequence::-webkit-scrollbar { display: none; }
+  /* Sequence — 6 exercise cards and 3 arpeggio cards all fit centred */
+  .exercise-sequence { justify-content: center; flex-wrap: wrap; width: 100%; }
 
   .ex-card { width: 44px; height: 52px; border-radius: 8px; }
 

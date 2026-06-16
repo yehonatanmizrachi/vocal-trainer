@@ -95,6 +95,5 @@ export function findNearestDegree(detectedMidi, scaleNotes, toleranceCents = 80)
 }
 
 export function generateExercise() {
-  const length = Math.floor(Math.random() * 6) + 5;
-  return Array.from({ length }, () => Math.floor(Math.random() * 7) + 1);
+  return Array.from({ length: 6 }, () => Math.floor(Math.random() * 7) + 1);
 }
