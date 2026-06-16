@@ -283,8 +283,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 36px 20px;
+  justify-content: flex-start;
+  padding: 48px 20px 36px;
   gap: 36px;
 }
 
@@ -510,7 +510,8 @@ body {
 ═══════════════════════════════════════════ */
 .pitch-display {
   text-align: center;
-  min-height: 96px;
+  height: 120px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -649,7 +650,7 @@ button {
   .chord-toggle-quality { font-size: 0.6rem; }
 
   /* Pitch display */
-  .pitch-display { min-height: 80px; }
+  .pitch-display { height: 100px; }
   .detected-note { font-size: 2.8rem; }
 }
 
