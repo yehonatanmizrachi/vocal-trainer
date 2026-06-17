@@ -34,7 +34,7 @@ function playCoinSound() {
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(true);
-  const [tab, setTab] = useState('practice');
+  const [tab, setTab] = useState('exercise');
   const [coins, setCoins] = useState(0);
 
   const { scale, setRootPc, setModeIndex, randomize, playRoot } = useScale();
@@ -95,7 +95,7 @@ export default function App() {
       />
 
       <nav className="tab-bar">
-        {['practice', 'exercise', 'arpeggio'].map(t => (
+        {['exercise', 'arpeggio', 'practice'].map(t => (
           <button
             key={t}
             className={`tab-btn${tab === t ? ' active' : ''}`}

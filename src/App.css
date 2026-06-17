@@ -339,7 +339,7 @@ body {
   max-width: 720px;
 }
 
-.exercise-header { display: flex; align-items: center; gap: 16px; }
+.exercise-header { display: flex; align-items: center; justify-content: center; gap: 16px; }
 
 .exercise-progress { font-size: 0.85rem; color: #64748b; font-variant-numeric: tabular-nums; }
 
